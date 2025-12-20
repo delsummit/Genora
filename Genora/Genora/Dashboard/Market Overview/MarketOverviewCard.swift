@@ -32,7 +32,6 @@ struct MarketOverviewCard: View {
                     .foregroundColor(metric.changeColor)
             }
             
-            Spacer()
         }
         .padding()
         .frame(maxWidth: .infinity, minHeight: 145)

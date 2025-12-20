@@ -1,0 +1,199 @@
+//
+//  TVLChartView.swift
+//  Genora
+//
+//  Created by Rostyslav Mukoida on 20/12/2025.
+//
+
+import SwiftUI
+import Charts
+
+struct TVLChartView: View {
+    @State private var viewModel = TVLChartViewModel()
+    @State private var selectedDate: Date?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            headerSection
+            
+            if viewModel.isLoading {
+                chartSkeleton
+            } else if let errorMessage = viewModel.errorMessage {
+                errorView(errorMessage)
+            } else if !viewModel.historicalData.isEmpty {
+                chartSection
+            }
+        }
+        .padding()
+        .background(chartBackground)
+        .overlay(chartBorder)
+        .task {
+            await viewModel.loadHistoricalTVL()
+        }
+    }
+    
+    // MARK: - Header Section
+    
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Total Value Locked")
+                .font(.headline)
+                .foregroundStyle(.textPrimary)
+            
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(formatTVL(viewModel.currentTVL))
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(.textPrimary)
+                
+                changeIndicator
+            }
+        }
+    }
+    
+    private var changeIndicator: some View {
+        HStack(spacing: 4) {
+            Image(systemName: viewModel.tvlChange >= 0 ? "arrow.up.right" : "arrow.down.right")
+                .font(.system(size: 12, weight: .semibold))
+            
+            Text(String(format: "%.2f%%", abs(viewModel.tvlChange)))
+                .font(.system(size: 14, weight: .semibold))
+        }
+        .foregroundStyle(viewModel.tvlChange >= 0 ? .textPositive : .textNegative)
+    }
+    
+    // MARK: - Chart Section
+    
+    private var yAxisDomain: ClosedRange<Int> {
+        guard !viewModel.historicalData.isEmpty else {
+            return 0...100
+        }
+        
+        let minValue = viewModel.minTVL
+        let maxValue = viewModel.maxTVL
+        let range = maxValue - minValue
+        
+        let padding = max(Int(Double(range) * 0.1), 1)
+        
+        return (minValue - padding)...(maxValue + padding)
+    }
+    
+    private var chartSection: some View {
+        Chart(viewModel.historicalData) { item in
+            LineMark(
+                x: .value("Date", item.dateValue),
+                y: .value("TVL", item.tvl)
+            )
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [.accentPrimary, .accentPrimary.opacity(0.8)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .lineStyle(StrokeStyle(lineWidth: 2))
+            
+            AreaMark(
+                x: .value("Date", item.dateValue),
+                yStart: .value("Min", yAxisDomain.lowerBound),
+                yEnd: .value("TVL", item.tvl)
+            )
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [
+                        .accentPrimary.opacity(0.3),
+                        .accentPrimary.opacity(0.1),
+                        .clear
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            
+            if let selectedDate = selectedDate {
+                RuleMark(x: .value("Selected", selectedDate))
+                    .foregroundStyle(.white.opacity(0.3))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 5]))
+            }
+        }
+        .frame(height: 200)
+        .chartYScale(domain: yAxisDomain)
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day, count: 2)) { value in
+                if let date = value.as(Date.self) {
+                    AxisValueLabel {
+                        Text(date, format: .dateTime.day().month(.abbreviated))
+                            .font(.caption2)
+                            .foregroundStyle(.textSecondary)
+                    }
+                }
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .trailing) { value in
+                AxisValueLabel {
+                    if let tvl = value.as(Int.self) {
+                        Text(formatAxisTVL(tvl))
+                            .font(.caption2)
+                            .foregroundStyle(.textSecondary)
+                    }
+                }
+            }
+        }
+        .chartXSelection(value: $selectedDate)
+    }
+    
+    // MARK: - Skeleton
+    
+    private var chartSkeleton: some View {
+        SkeletonView(RoundedRectangle(cornerRadius: 8), .backgroundTertiary)
+            .frame(height: 200)
+    }
+    
+    // MARK: - Error View
+    
+    private func errorView(_ message: String) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 32))
+                .foregroundStyle(.accentRed)
+            
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.textSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 200)
+    }
+    
+    // MARK: - Styling
+    
+    private var chartBackground: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .fill(.backgroundSecondary)
+            .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 6)
+    }
+    
+    private var chartBorder: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .stroke(.border.opacity(0.4), lineWidth: 1)
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func formatTVL(_ value: Int) -> String {
+        let billion = Double(value) / 1_000_000_000
+        return String(format: "$%.2fB", billion)
+    }
+    
+    private func formatAxisTVL(_ value: Int) -> String {
+        let billion = Double(value) / 1_000_000_000
+        return String(format: "%.0fB", billion)
+    }
+}
+
+#Preview {
+    TVLChartView()
+        .padding()
+        .background(.backgroundPrimary)
+}

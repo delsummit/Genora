@@ -13,8 +13,10 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack {
+                VStack(spacing: 20) {
                     MarketOverviewGrid(viewModel: viewModel)
+                    
+                    TVLChartView()
                 }
                 .padding()
                 .task {

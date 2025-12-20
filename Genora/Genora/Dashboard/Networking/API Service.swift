@@ -7,13 +7,15 @@
 
 import Foundation
 
-class ChainsService {
-    static let shared = ChainsService()
+protocol APIEndpoint {
+    static var endpoint: String { get }
+}
+
+class APIService {
+    static let shared = APIService()
     private init() { }
     
-    func fetchChains() async throws -> [ProtocolsTVL] {
-        let endpoint = "https://api.llama.fi/protocols"
-        
+    func fetchChains<T: Decodable>(endpoint: String) async throws -> T {
         guard let url = URL(string: endpoint) else {
             throw LiamaAPIError.invalidURL
         }
@@ -29,10 +31,15 @@ class ChainsService {
         
         do {
             let decoder = JSONDecoder()
-            return try decoder.decode([ProtocolsTVL].self, from: data)
+            return try decoder.decode(T.self, from: data)
         } catch {
             throw LiamaAPIError.invalidData
         }
+    }
+    
+    // Метод, який використовує endpoint зі структури
+    func fetch<T: Decodable & APIEndpoint>() async throws -> T {
+        return try await fetchChains(endpoint: T.endpoint)
     }
 }
 

@@ -122,6 +122,17 @@ extension Color {
         light: Color(hex: "#E5E5E5"),
         dark: Color(hex: "#16A085")
     )
+    
+    // MARK: - Accent Colors
+    static let accentPrimary = Color(
+        light: Color(hex: "#16A085"),
+        dark: Color(hex: "#16A085")
+    )
+    
+    static let accentRed = Color(
+        light: Color(hex: "#C44B5A"),
+        dark: Color(hex: "#C44B5A")
+    )
 }
 
 extension ShapeStyle where Self == Color {
@@ -136,5 +147,6 @@ extension ShapeStyle where Self == Color {
     static var border: Color { Color.border }
     static var textPositive: Color { Color.textPositive }
     static var textNegative: Color { Color.textNegative }
-
+    static var accentPrimary: Color { Color.accentPrimary }
+    static var accentRed: Color { Color.accentRed }
 }

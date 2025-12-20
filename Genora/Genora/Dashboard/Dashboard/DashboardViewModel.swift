@@ -25,7 +25,7 @@ final class DashboardViewModel {
         errorMessage = nil
         
         do {
-            let protocols = try await ChainsService.shared.fetchChains()
+            let protocols: [ProtocolsTVL] = try await APIService.shared.fetchChains(endpoint: ProtocolsTVL.endpoint)
             metrics = calculateMetrics(from: protocols)
         } catch LiamaAPIError.invalidURL {
             errorMessage = "Invalid URL"
@@ -36,7 +36,6 @@ final class DashboardViewModel {
         } catch {
             errorMessage = "Unexpected error: \(error.localizedDescription)"
         }
-        
     }
     
     // MARK: - Private Methods
