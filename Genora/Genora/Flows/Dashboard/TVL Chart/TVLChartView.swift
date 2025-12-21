@@ -36,12 +36,12 @@ struct TVLChartView: View {
     
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Total Value Locked")
+            Text("TVL Chart")
                 .font(.headline)
                 .foregroundStyle(.textPrimary)
             
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(formatTVL(viewModel.currentTVL))
+                Text(viewModel.stats.current.formatted(decimals: 2, currency: true))
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.textPrimary)
                 
@@ -52,13 +52,13 @@ struct TVLChartView: View {
     
     private var changeIndicator: some View {
         HStack(spacing: 4) {
-            Image(systemName: viewModel.tvlChange >= 0 ? "arrow.up.right" : "arrow.down.right")
+            Image(systemName: viewModel.stats.change >= 0 ? "arrow.up.right" : "arrow.down.right")
                 .font(.system(size: 12, weight: .semibold))
             
-            Text(String(format: "%.2f%%", abs(viewModel.tvlChange)))
+            Text(String(format: "%.2f%%", abs(viewModel.stats.change)))
                 .font(.system(size: 14, weight: .semibold))
         }
-        .foregroundStyle(viewModel.tvlChange >= 0 ? .textPositive : .textNegative)
+        .foregroundStyle(viewModel.stats.change >= 0 ? .textPositive : .textNegative)
     }
     
     // MARK: - Chart Section
@@ -68,8 +68,8 @@ struct TVLChartView: View {
             return 0...100
         }
         
-        let minValue = viewModel.minTVL
-        let maxValue = viewModel.maxTVL
+        let minValue = viewModel.stats.min
+        let maxValue = viewModel.stats.max
         let range = maxValue - minValue
         
         let padding = max(Int(Double(range) * 0.1), 1)
@@ -132,7 +132,7 @@ struct TVLChartView: View {
             AxisMarks(position: .trailing) { value in
                 AxisValueLabel {
                     if let tvl = value.as(Int.self) {
-                        Text(formatAxisTVL(tvl))
+                        Text(tvl.formatted(decimals: 0))
                             .font(.caption2)
                             .foregroundStyle(.textSecondary)
                     }
@@ -177,18 +177,6 @@ struct TVLChartView: View {
     private var chartBorder: some View {
         RoundedRectangle(cornerRadius: 20)
             .stroke(.border.opacity(0.4), lineWidth: 1)
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func formatTVL(_ value: Int) -> String {
-        let billion = Double(value) / 1_000_000_000
-        return String(format: "$%.2fB", billion)
-    }
-    
-    private func formatAxisTVL(_ value: Int) -> String {
-        let billion = Double(value) / 1_000_000_000
-        return String(format: "%.0fB", billion)
     }
 }
 
