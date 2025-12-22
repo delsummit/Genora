@@ -13,7 +13,7 @@ struct MarketOverviewCard: View {
     @State private var isPressed = false
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 20) {
             Text(metric.title)
                 .font(.headline)
                 .foregroundColor(.textPrimary)
