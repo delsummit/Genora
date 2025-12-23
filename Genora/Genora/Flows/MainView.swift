@@ -20,11 +20,7 @@ struct MainView: View {
                 StrategiesView()
             }
             
-            Tab("Pools", systemImage: "cube", value: "Pools") {
-                PoolsView()
-            }
-            
-            Tab("Profile", systemImage: "person", value: "Profile") {
+            Tab("Settings", systemImage: "gear", value: "Settings") {
                 ProfileView()
             }
         }

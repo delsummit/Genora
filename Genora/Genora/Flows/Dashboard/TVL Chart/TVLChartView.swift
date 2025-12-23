@@ -11,6 +11,7 @@ import Charts
 struct TVLChartView: View {
     @State private var viewModel = TVLChartViewModel()
     @State private var selectedDate: Date?
+    @State private var selectedTVL: Int?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -41,13 +42,32 @@ struct TVLChartView: View {
                 .foregroundStyle(.textPrimary)
             
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(viewModel.stats.current.formatted(decimals: 2, currency: true))
+                Text(displayedTVL.formatted(decimals: 2, currency: true))
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.textPrimary)
+                    .contentTransition(.numericText())
+                    .animation(.smooth, value: displayedTVL)
                 
                 changeIndicator
             }
+            
+            if let date = displayedDate {
+                Text(date, format: .dateTime.month(.abbreviated).day().year())
+                    .font(.caption)
+                    .foregroundStyle(.textSecondary)
+            }
         }
+    }
+    
+    private var displayedDate: Date? {
+        if let selectedDate = selectedDate, selectedTVL != nil {
+            return selectedDate
+        }
+        return viewModel.historicalData.last?.dateValue
+    }
+    
+    private var displayedTVL: Int {
+        selectedTVL ?? viewModel.stats.current
     }
     
     private var changeIndicator: some View {
@@ -91,6 +111,7 @@ struct TVLChartView: View {
                 )
             )
             .lineStyle(StrokeStyle(lineWidth: 2))
+            .interpolationMethod(.cardinal)
             
             AreaMark(
                 x: .value("Date", item.dateValue),
@@ -108,8 +129,9 @@ struct TVLChartView: View {
                     endPoint: .bottom
                 )
             )
+            .interpolationMethod(.monotone)
             
-            if let selectedDate = selectedDate {
+            if let selectedDate = selectedDate, selectedTVL != nil {
                 RuleMark(x: .value("Selected", selectedDate))
                     .foregroundStyle(.white.opacity(0.3))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 5]))
@@ -140,6 +162,36 @@ struct TVLChartView: View {
             }
         }
         .chartXSelection(value: $selectedDate)
+        .chartXScale(domain: chartXDomain)
+        .onChange(of: selectedDate) { oldValue, newValue in
+            updateSelectedTVL(for: newValue)
+        }
+    }
+    
+    private var chartXDomain: ClosedRange<Date> {
+        guard let firstDate = viewModel.historicalData.first?.dateValue,
+              let lastDate = viewModel.historicalData.last?.dateValue else {
+            return Date()...Date()
+        }
+        return firstDate...lastDate
+    }
+    
+    private func updateSelectedTVL(for date: Date?) {
+        guard let date = date,
+              let firstDate = viewModel.historicalData.first?.dateValue,
+              let lastDate = viewModel.historicalData.last?.dateValue,
+              date >= firstDate && date <= lastDate else {
+            selectedTVL = nil
+            selectedDate = nil
+            return
+        }
+        
+        // closest point (to show data while dragging chart)
+        let closestData = viewModel.historicalData.min(by: { data1, data2 in
+            abs(data1.dateValue.timeIntervalSince(date)) < abs(data2.dateValue.timeIntervalSince(date))
+        })
+        
+        selectedTVL = closestData?.tvl
     }
     
     // MARK: - Skeleton

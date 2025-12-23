@@ -48,7 +48,7 @@ final class TVLChartViewModel {
         do {
             let rawData = try await repository.fetchHistoricalTVL()
             
-            historicalData = processor.process(rawData, days: 7)
+            historicalData = processor.process(rawData, days: 14)
             stats = processor.calculateStats(from: historicalData)
             
         } catch LiamaAPIError.invalidURL {
