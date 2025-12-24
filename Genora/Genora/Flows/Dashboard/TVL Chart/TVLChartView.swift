@@ -9,7 +9,7 @@ import SwiftUI
 import Charts
 
 struct TVLChartView: View {
-    @State private var viewModel = TVLChartViewModel()
+    let viewModel: DashboardViewModel
     @State private var selectedDate: Date?
     @State private var selectedTVL: Int?
     @State private var lastHapticDate: Date?
@@ -19,9 +19,9 @@ struct TVLChartView: View {
         VStack(alignment: .leading, spacing: 16) {
             headerSection
             
-            if viewModel.isLoading {
+            if viewModel.isLoadingTVL {
                 chartSkeleton
-            } else if let errorMessage = viewModel.errorMessage {
+            } else if let errorMessage = viewModel.tvlErrorMessage {
                 errorView(errorMessage)
             } else if !viewModel.historicalData.isEmpty {
                 chartSection
@@ -30,9 +30,8 @@ struct TVLChartView: View {
         .padding()
         .background(chartBackground)
         .overlay(chartBorder)
-        .task {
+        .onAppear {
             haptics.prepareHaptics()
-            await viewModel.loadHistoricalTVL()
         }
     }
     
@@ -70,18 +69,18 @@ struct TVLChartView: View {
     }
     
     private var displayedTVL: Int {
-        selectedTVL ?? viewModel.stats.current
+        selectedTVL ?? viewModel.tvlStats.current
     }
     
     private var changeIndicator: some View {
         HStack(spacing: 4) {
-            Image(systemName: viewModel.stats.change >= 0 ? "arrow.up.right" : "arrow.down.right")
+            Image(systemName: viewModel.tvlStats.change >= 0 ? "arrow.up.right" : "arrow.down.right")
                 .font(.system(size: 12, weight: .semibold))
             
-            Text(String(format: "%.2f%%", abs(viewModel.stats.change)))
+            Text(String(format: "%.2f%%", abs(viewModel.tvlStats.change)))
                 .font(.system(size: 14, weight: .semibold))
         }
-        .foregroundStyle(viewModel.stats.change >= 0 ? .textPositive : .textNegative)
+        .foregroundStyle(viewModel.tvlStats.change >= 0 ? .textPositive : .textNegative)
     }
     
     // MARK: - Chart Section
@@ -91,8 +90,8 @@ struct TVLChartView: View {
             return 0...100
         }
         
-        let minValue = viewModel.stats.min
-        let maxValue = viewModel.stats.max
+        let minValue = viewModel.tvlStats.min
+        let maxValue = viewModel.tvlStats.max
         let range = maxValue - minValue
         
         let padding = max(Int(Double(range) * 0.1), 1)
@@ -213,7 +212,7 @@ struct TVLChartView: View {
         
         haptics.lightTap()
         
-        if tvl == viewModel.stats.min || tvl == viewModel.stats.max {
+        if tvl == viewModel.tvlStats.min || tvl == viewModel.tvlStats.max {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.haptics.milestone()
             }
@@ -259,7 +258,19 @@ struct TVLChartView: View {
 }
 
 #Preview {
-    TVLChartView()
+    let mockRepo = MockDeFiRepository()
+    let calculator = MetricsCalculator()
+    let processor = HistoricalTVLProcessor()
+    let viewModel = DashboardViewModel(
+        repository: mockRepo,
+        calculator: calculator,
+        tvlProcessor: processor
+    )
+    
+    TVLChartView(viewModel: viewModel)
         .padding()
         .background(.backgroundPrimary)
+        .task {
+            await viewModel.loadHistoricalTVL()
+        }
 }

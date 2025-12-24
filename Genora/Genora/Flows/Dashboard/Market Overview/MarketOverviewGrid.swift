@@ -12,9 +12,11 @@ struct MarketOverviewGrid: View {
     
     var body: some View {
         VStack {
-            if viewModel.metrics.isEmpty {
+            if viewModel.isLoadingMetrics {
                 skeletonContent
-            } else {
+            } else if let errorMessage = viewModel.metricsErrorMessage {
+                errorView(errorMessage)
+            } else if !viewModel.metrics.isEmpty {
                 metricsContent
             }
         }
@@ -41,6 +43,21 @@ struct MarketOverviewGrid: View {
                 MarketOverviewCardSkeleton()
             }
         }
+    }
+    
+    private func errorView(_ message: String) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 32))
+                .foregroundStyle(.accentRed)
+            
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.textSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
     }
     
     private func metricRow(for rowIndex: Int) -> some View {
@@ -80,7 +97,12 @@ struct MarketOverviewGrid: View {
 #Preview {
     let mockRepo = MockDeFiRepository()
     let calculator = MetricsCalculator()
-    let viewModel = DashboardViewModel(repository: mockRepo, calculator: calculator)
+    let processor = HistoricalTVLProcessor()
+    let viewModel = DashboardViewModel(
+        repository: mockRepo,
+        calculator: calculator,
+        tvlProcessor: processor
+    )
     
     MarketOverviewGrid(viewModel: viewModel)
         .task {

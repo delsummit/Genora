@@ -16,11 +16,11 @@ struct DashboardView: View {
                 VStack(spacing: 20) {
                     MarketOverviewGrid(viewModel: viewModel)
                     
-                    TVLChartView()
+                    TVLChartView(viewModel: viewModel)
                 }
                 .padding()
                 .task {
-                    await viewModel.loadMetrics()
+                    await viewModel.loadDashboardData()
                 }
             }
             .navigationTitle("Market overview")

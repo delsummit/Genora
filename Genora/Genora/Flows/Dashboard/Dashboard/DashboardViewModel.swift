@@ -13,33 +13,56 @@ import Observation
 final class DashboardViewModel {
     
     // MARK: - State
+    
+    // Market Overview
     var metrics: [MarketOverviewMetric] = []
-    var errorMessage: String?
-    var isLoading = false
+    var metricsErrorMessage: String?
+    var isLoadingMetrics = true
+    
+    // TVL Chart
+    var historicalData: [HistoricalTVL] = []
+    var tvlStats: TVLStats = TVLStats(min: 0, max: 0, current: 0, change: 0)
+    var tvlErrorMessage: String?
+    var isLoadingTVL = true
     
     // MARK: - Dependencies
     private let repository: DeFiRepositoryProtocol
     private let calculator: MetricsCalculator
+    private let tvlProcessor: HistoricalTVLProcessor
     
     init(
         repository: DeFiRepositoryProtocol,
-        calculator: MetricsCalculator
+        calculator: MetricsCalculator,
+        tvlProcessor: HistoricalTVLProcessor
     ) {
         self.repository = repository
         self.calculator = calculator
+        self.tvlProcessor = tvlProcessor
     }
     
     convenience init() {
         self.init(
             repository: DeFiRepository(),
-            calculator: MetricsCalculator()
+            calculator: MetricsCalculator(),
+            tvlProcessor: HistoricalTVLProcessor()
         )
     }
     
     // MARK: - Public Methods
+    func loadDashboardData() async {
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.loadMetrics()
+            }
+            
+            group.addTask {
+                await self.loadHistoricalTVL()
+            }
+        }
+    }
+    
     func loadMetrics() async {
-        isLoading = true
-        errorMessage = nil
+        metricsErrorMessage = nil
         
         do {
             let protocols = try await repository.fetchProtocols()
@@ -47,19 +70,41 @@ final class DashboardViewModel {
             metrics = calculator.calculate(from: protocols)
             
             if metrics.isEmpty {
-                errorMessage = "No data available"
+                metricsErrorMessage = "No data available"
             }
             
         } catch LiamaAPIError.invalidURL {
-            errorMessage = "Invalid URL"
+            metricsErrorMessage = "Invalid URL"
         } catch LiamaAPIError.invalidResponse {
-            errorMessage = "Invalid response"
+            metricsErrorMessage = "Invalid response"
         } catch LiamaAPIError.invalidData {
-            errorMessage = "Invalid data"
+            metricsErrorMessage = "Invalid data"
         } catch {
-            errorMessage = "Unexpected error: \(error.localizedDescription)"
+            metricsErrorMessage = "Unexpected error: \(error.localizedDescription)"
         }
         
-        isLoading = false
+        isLoadingMetrics = false
+    }
+    
+    func loadHistoricalTVL() async {
+        tvlErrorMessage = nil
+        
+        do {
+            let rawData = try await repository.fetchHistoricalTVL()
+            
+            historicalData = tvlProcessor.process(rawData, days: 14)
+            tvlStats = tvlProcessor.calculateStats(from: historicalData)
+            
+        } catch LiamaAPIError.invalidURL {
+            tvlErrorMessage = "Invalid URL"
+        } catch LiamaAPIError.invalidResponse {
+            tvlErrorMessage = "Invalid response"
+        } catch LiamaAPIError.invalidData {
+            tvlErrorMessage = "Invalid data"
+        } catch {
+            tvlErrorMessage = "Unexpected error: \(error.localizedDescription)"
+        }
+        
+        isLoadingTVL = false
     }
 }
