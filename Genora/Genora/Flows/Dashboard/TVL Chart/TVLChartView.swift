@@ -85,6 +85,10 @@ struct TVLChartView: View {
     
     // MARK: - Chart Section
     
+    private var chartColor: Color {
+        viewModel.tvlStats.change >= 0 ? .accentPrimary : .accentRed
+    }
+    
     private var yAxisDomain: ClosedRange<Int> {
         guard !viewModel.historicalData.isEmpty else {
             return 0...100
@@ -107,7 +111,7 @@ struct TVLChartView: View {
             )
             .foregroundStyle(
                 LinearGradient(
-                    colors: [.accentPrimary, .accentPrimary.opacity(0.8)],
+                    colors: [chartColor, chartColor.opacity(0.8)],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -123,8 +127,8 @@ struct TVLChartView: View {
             .foregroundStyle(
                 LinearGradient(
                     colors: [
-                        .accentPrimary.opacity(0.3),
-                        .accentPrimary.opacity(0.1),
+                        chartColor.opacity(0.3),
+                        chartColor.opacity(0.1),
                         .clear
                     ],
                     startPoint: .top,
@@ -154,6 +158,9 @@ struct TVLChartView: View {
         }
         .chartYAxis {
             AxisMarks(position: .trailing) { value in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2, 4]))
+                    .foregroundStyle(.textSecondary.opacity(0.2))
+                
                 AxisValueLabel {
                     if let tvl = value.as(Int.self) {
                         Text(tvl.formatted(decimals: 0))
