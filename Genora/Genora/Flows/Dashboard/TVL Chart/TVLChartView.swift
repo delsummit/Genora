@@ -265,11 +265,11 @@ struct TVLChartView: View {
 }
 
 #Preview {
-    let mockRepo = MockDeFiRepository()
+    let mockAPIClient = MockDeFiAPIClient()
     let calculator = MetricsCalculator()
     let processor = HistoricalTVLProcessor()
     let viewModel = DashboardViewModel(
-        repository: mockRepo,
+        apiClient: mockAPIClient,
         calculator: calculator,
         tvlProcessor: processor
     )

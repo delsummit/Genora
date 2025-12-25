@@ -33,6 +33,28 @@ struct ProtocolsTVL: Codable, Identifiable, APIEndpoint {
         case change_7d
     }
     
+    init(
+        id: String,
+        name: String,
+        symbol: String? = nil,
+        category: String? = nil,
+        chains: [String]? = nil,
+        tvl: Double? = nil,
+        chainTvls: [String: Double]? = nil,
+        change_1d: Double? = nil,
+        change_7d: Double? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.symbol = symbol
+        self.category = category
+        self.chains = chains
+        self.tvl = tvl
+        self.chainTvls = chainTvls
+        self.change_1d = change_1d
+        self.change_7d = change_7d
+    }
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         

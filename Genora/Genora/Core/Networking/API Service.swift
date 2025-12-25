@@ -37,7 +37,6 @@ class APIService {
         }
     }
     
-    // Метод, який використовує endpoint зі структури
     func fetch<T: Decodable & APIEndpoint>() async throws -> T {
         return try await fetchChains(endpoint: T.endpoint)
     }

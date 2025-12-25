@@ -26,23 +26,23 @@ final class DashboardViewModel {
     var isLoadingTVL = true
     
     // MARK: - Dependencies
-    private let repository: DeFiRepositoryProtocol
+    private let apiClient: DeFiAPIClientProtocol
     private let calculator: MetricsCalculator
     private let tvlProcessor: HistoricalTVLProcessor
     
     init(
-        repository: DeFiRepositoryProtocol,
+        apiClient: DeFiAPIClientProtocol,
         calculator: MetricsCalculator,
         tvlProcessor: HistoricalTVLProcessor
     ) {
-        self.repository = repository
+        self.apiClient = apiClient
         self.calculator = calculator
         self.tvlProcessor = tvlProcessor
     }
     
     convenience init() {
         self.init(
-            repository: DeFiRepository(),
+            apiClient: DeFiAPIClient(),
             calculator: MetricsCalculator(),
             tvlProcessor: HistoricalTVLProcessor()
         )
@@ -65,7 +65,7 @@ final class DashboardViewModel {
         metricsErrorMessage = nil
         
         do {
-            let protocols = try await repository.fetchProtocols()
+            let protocols = try await apiClient.fetchProtocols()
             
             metrics = calculator.calculate(from: protocols)
             
@@ -90,7 +90,7 @@ final class DashboardViewModel {
         tvlErrorMessage = nil
         
         do {
-            let rawData = try await repository.fetchHistoricalTVL()
+            let rawData = try await apiClient.fetchHistoricalTVL()
             
             historicalData = tvlProcessor.process(rawData, days: 14)
             tvlStats = tvlProcessor.calculateStats(from: historicalData)
