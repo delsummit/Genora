@@ -1,5 +1,5 @@
 //
-//  APIEndpoints.swift
+//  DeFiLiamaEndpoint.swift
 //  Genora
 //
 //  Created by Rostyslav Mukoida on 25/12/2025.
