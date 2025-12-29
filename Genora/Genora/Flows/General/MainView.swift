@@ -21,7 +21,7 @@ struct MainView: View {
             }
             
             Tab("Settings", systemImage: "gear", value: "Settings") {
-                ProfileView()
+                SettingsView()
             }
         }
         .onAppear() {
