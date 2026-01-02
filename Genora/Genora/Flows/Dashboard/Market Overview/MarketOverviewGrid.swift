@@ -28,7 +28,6 @@ struct MarketOverviewGrid: View {
         }
         .padding()
         .background(metricsBackground)
-        .overlay(metricsBorder)
     }
     
     @ViewBuilder
@@ -92,11 +91,6 @@ struct MarketOverviewGrid: View {
         RoundedRectangle(cornerRadius: 20)
             .fill(.backgroundSecondary)
             .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 6)
-    }
-    
-    private var metricsBorder: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .stroke(.border.opacity(0.4), lineWidth: 1)
     }
 }
 
