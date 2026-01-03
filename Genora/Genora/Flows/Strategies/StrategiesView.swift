@@ -12,7 +12,24 @@ struct StrategiesView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                StrategiesUserInputView()
+                VStack {
+                    StrategiesUserInputMoneyView()
+
+                    Divider()
+                        .frame(height: 20)
+                    
+                    StrategiesSelectedChainsView()
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 24)
+                        .fill(Color.backgroundSecondary)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24)
+                        .stroke(Color.gray.opacity(0), lineWidth: 1)
+                )
+                .padding()
             }
             .hideKeyboard()
             .navigationTitle("Strategies")
