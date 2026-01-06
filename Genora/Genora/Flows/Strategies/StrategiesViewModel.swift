@@ -6,32 +6,92 @@
 //
 
 import SwiftUI
+import Observation
 
 @Observable
-@MainActor
 final class StrategiesViewModel {
-    var yields: [YieldPool] = []
-    var isLoading = false
-    var errorMessage: String?
+    // MARK: - Properties
+    var selectedChains: Set<BlockchainChain> = []
+    var investmentAmount: String = ""
+    var isChainSelectionPresented = false
     
-    private let apiClient: DeFiAPIClientProtocol
-    
-    init(apiClient: DeFiAPIClientProtocol) {
-        self.apiClient = apiClient
+    var selectedChainsArray: [BlockchainChain] {
+        BlockchainChain.allCases
+            .filter { selectedChains.contains($0) }
+            .sorted { $0.rawValue < $1.rawValue }
     }
     
-    convenience init() {
-        self.init(apiClient: DeFiAPIClient())
+    var availableChains: [BlockchainChain] {
+        BlockchainChain.allCases
+            .filter { !selectedChains.contains($0) }
+            .sorted { $0.rawValue < $1.rawValue }
     }
     
-    func loadYieldPools() async {
-        isLoading = true
-        defer { isLoading = false }
-        
-        do {
-            yields = try await apiClient.fetchYieldPools()
-        } catch {
-            errorMessage = error.localizedDescription
+    var hasSelectedChains: Bool {
+        !selectedChains.isEmpty
+    }
+    
+    var selectedChainsCount: Int {
+        selectedChains.count
+    }
+    
+    var validInvestmentAmount: Double? {
+        guard !investmentAmount.isEmpty else { return nil }
+        return Double(investmentAmount.replacingOccurrences(of: ",", with: "."))
+    }
+    
+    // MARK: - Actions
+
+    func toggleChain(_ chain: BlockchainChain) {
+        if selectedChains.contains(chain) {
+            selectedChains.remove(chain)
+        } else {
+            selectedChains.insert(chain)
         }
+    }
+    
+    func clearAllChains() {
+        selectedChains.removeAll()
+    }
+    
+    func toggleChainSelection() {
+        isChainSelectionPresented.toggle()
+    }
+    
+    func setInvestmentAmount(_ amount: String) {
+        investmentAmount = amount
+    }
+    
+    func isChainSelected(_ chain: BlockchainChain) -> Bool {
+        selectedChains.contains(chain)
+    }
+    
+    // MARK: - Filters
+    func filterPools(_ pools: [YieldPool]) -> [YieldPool] {
+        guard hasSelectedChains else {
+            return pools
+        }
+        
+        return pools.filter { pool in
+            selectedChains.contains { chain in
+                chain.apiChainNames.contains(pool.chain)
+            }
+        }
+    }
+    
+    func filterPoolsByInvestment(_ pools: [YieldPool]) -> [YieldPool] {
+        guard let amount = validInvestmentAmount else {
+            return pools
+        }
+        
+        return pools.filter { pool in
+            pool.tvlUsd >= amount
+        }
+    }
+    
+    func applyAllFilters(_ pools: [YieldPool]) -> [YieldPool] {
+        let chainFiltered = filterPools(pools)
+        let investmentFiltered = filterPoolsByInvestment(chainFiltered)
+        return investmentFiltered
     }
 }

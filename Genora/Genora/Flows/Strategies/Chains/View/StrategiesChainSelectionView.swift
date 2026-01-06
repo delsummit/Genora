@@ -7,9 +7,8 @@
 
 import SwiftUI
 
-struct StrategiesSelectedChainsView: View {
-    @State private var viewModel = StrategiesViewModel()
-    @Binding var selection: Set<YieldPool>
+struct StrategiesChainSelectionView: View {
+    @Bindable var viewModel: StrategiesViewModel
     
     var body: some View {
         Text("Mark preferred chains")
@@ -29,9 +28,7 @@ struct StrategiesSelectedChainsView: View {
             .glassEffect()
             
             Button(action: {
-                Task {
-                    await viewModel.loadYieldPools()
-                }
+                viewModel.toggleChainSelection()
             }) {
                 Image(systemName: "square.and.pencil")
                     .frame(width: 40)
@@ -39,21 +36,24 @@ struct StrategiesSelectedChainsView: View {
             }
             .buttonStyle(.glass)
         }
+        .sheet(isPresented: $viewModel.isChainSelectionPresented) {
+            StrategiesChainSelectionSheetView(viewModel: viewModel)
+                .presentationDetents([.medium, .large])
+        }
     }
     
     @ViewBuilder
     private var headerView: some View {
-        if selection.isEmpty {
-            Text("No chains selected")
+        if !viewModel.hasSelectedChains {
+            Text("Default: all chains")
                 .foregroundStyle(.secondary)
         } else {
-            HStack(spacing: 0) {
-                HStack {
-                    Image(systemName: "bitcoinsign.circle.fill")
-                        //.font(.largeTitle)
-                        .foregroundStyle(.blue)
-                }
-            }
+            ChainIconStackView(
+                chains: viewModel.selectedChainsArray,
+                maxVisible: 7,
+                iconSize: 32,
+                overlapOffset: -8
+            )
         }
     }
 }

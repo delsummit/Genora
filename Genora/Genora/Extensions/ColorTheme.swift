@@ -67,7 +67,7 @@ extension Color {
     
     static let backgroundTertiary = Color(
         light: Color(hex: "#EBEBEB"),
-        dark: Color(hex: "#23292F")
+        dark: Color(hex: "#576675")
     )
     
     // MARK: - Text Colors

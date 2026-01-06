@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct StrategiesView: View {
-    @State private var selectedChains: Set<YieldPool> = []
+    @State private var viewModel = StrategiesViewModel()
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    StrategiesUserInputMoneyView()
+                    StrategiesUserInputMoneyView(viewModel: viewModel)
 
                     Divider()
                         .frame(height: 20)
                     
-                    StrategiesSelectedChainsView(selection: $selectedChains)
+                    StrategiesChainSelectionView(viewModel: viewModel)
                 }
                 .padding()
                 .background(

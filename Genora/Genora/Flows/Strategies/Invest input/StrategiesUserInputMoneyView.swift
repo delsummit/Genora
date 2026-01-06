@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StrategiesUserInputMoneyView: View {
-    @State private var usdtAmount: Double?
+    @Bindable var viewModel: StrategiesViewModel
     @FocusState private var isAmountFieldFocused: Bool
     
     var body: some View {
@@ -31,18 +31,13 @@ struct StrategiesUserInputMoneyView: View {
                     .fill(.tertiary)
                     .frame(width: 1)
                 
-                TextField("Enter the value", value: $usdtAmount, format: .number.grouping(.automatic))
+                TextField("Enter the value", text: $viewModel.investmentAmount)
                     .textFieldStyle(.plain)
                     .keyboardType(.decimalPad)
                     .focused($isAmountFieldFocused)
             }
             .padding()
             .glassEffect(.regular)
-        }
-        .onChange(of: isAmountFieldFocused) { oldValue, newValue in
-            if oldValue == true && newValue == false {
-                // losing focus and value changes
-            }
         }
     }
 }
