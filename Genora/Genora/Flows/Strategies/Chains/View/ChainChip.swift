@@ -22,6 +22,7 @@ struct ChainChip: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
+                            .clipShape(Circle())
                     case .failure, .empty:
                         Image(systemName: chain.iconName)
                             .font(.system(size: 16))
