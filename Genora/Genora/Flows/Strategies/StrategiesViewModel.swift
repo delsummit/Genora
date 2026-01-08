@@ -13,6 +13,7 @@ final class StrategiesViewModel {
     // MARK: - Properties
     var selectedChains: Set<BlockchainChain> = []
     var investmentAmount: String = ""
+    var minimumAPY: Double = 10.0
     var isChainSelectionPresented = false
     
     var selectedChainsArray: [BlockchainChain] {
@@ -89,9 +90,20 @@ final class StrategiesViewModel {
         }
     }
     
+    func filterPoolsByAPY(_ pools: [YieldPool]) -> [YieldPool] {
+        guard minimumAPY > 10 else {
+            return pools
+        }
+        
+        return pools.filter { pool in
+            pool.apy >= minimumAPY
+        }
+    }
+    
     func applyAllFilters(_ pools: [YieldPool]) -> [YieldPool] {
         let chainFiltered = filterPools(pools)
         let investmentFiltered = filterPoolsByInvestment(chainFiltered)
-        return investmentFiltered
+        let apyFiltered = filterPoolsByAPY(investmentFiltered)
+        return apyFiltered
     }
 }

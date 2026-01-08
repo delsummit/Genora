@@ -9,17 +9,23 @@ import SwiftUI
 
 struct StrategiesView: View {
     @State private var viewModel = StrategiesViewModel()
+    @FocusState private var isKeyboardVisible: Bool
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    StrategiesUserInputMoneyView(viewModel: viewModel)
+                    StrategiesUserInputMoneyView(viewModel: viewModel, isKeyboardVisible: $isKeyboardVisible)
 
                     Divider()
                         .frame(height: 20)
                     
                     StrategiesChainSelectionView(viewModel: viewModel)
+                    
+                    Divider()
+                        .frame(height: 20)
+                    
+                    StrategiesAPYSliderView(viewModel: viewModel, isKeyboardVisible: $isKeyboardVisible)
                 }
                 .padding()
                 .background(
@@ -32,10 +38,27 @@ struct StrategiesView: View {
                 )
                 .padding()
             }
-            .hideKeyboard()
+            .scrollDismissesKeyboard(.interactively)
+            .background(Color.backgroundPrimary.ignoresSafeArea())
             .navigationTitle("Strategies")
             .navigationBarTitleDisplayMode(.inline)
-            .background(.backgroundPrimary)
+            .toolbar {
+                if isKeyboardVisible {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") {
+                            isKeyboardVisible = false
+                        }
+                        .foregroundStyle(.element)
+                        .fontWeight(.semibold)
+                    }
+                }
+            }
+            .onTapGesture {
+                isKeyboardVisible = false
+            }
+            .onAppear {
+                HapticsEngine.shared.prepareHaptics()
+            }
         }
     }
 }

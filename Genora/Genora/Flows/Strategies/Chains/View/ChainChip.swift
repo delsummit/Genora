@@ -13,7 +13,10 @@ struct ChainChip: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticsEngine.shared.lightTap()
+            action()
+        }) {
             HStack(spacing: 8) {
                 AsyncImage(url: chain.trustWalletIconURL) { phase in
                     switch phase {

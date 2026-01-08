@@ -25,9 +25,10 @@ struct StrategiesChainSelectionView: View {
             }
             .frame(minHeight: 60)
             .padding(.horizontal)
-            .glassEffect()
-            
+            .glassEffect(.regular, in: .rect(cornerRadius: 24))
+
             Button(action: {
+                HapticsEngine.shared.lightTap()
                 viewModel.toggleChainSelection()
             }) {
                 Image(systemName: "square.and.pencil")
@@ -38,7 +39,7 @@ struct StrategiesChainSelectionView: View {
         }
         .sheet(isPresented: $viewModel.isChainSelectionPresented) {
             StrategiesChainSelectionSheetView(viewModel: viewModel)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
         }
     }
     

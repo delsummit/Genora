@@ -68,6 +68,7 @@ struct StrategiesChainSelectionSheetView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Clear All") {
+                        HapticsEngine.shared.milestone()
                         viewModel.clearAllChains()
                     }
                     .disabled(!viewModel.hasSelectedChains)

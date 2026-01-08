@@ -42,7 +42,7 @@ enum BlockchainChain: String, CaseIterable, Identifiable {
     
     var id: String { rawValue }
     
-    // tw - trust wallet, icon - placeholder
+    // tw - trust wallet
     private static let configs: [BlockchainChain: ChainConfig] = [
         .ethereum: ChainConfig("Ethereum", tw: "ethereum", api: ["Ethereum"]),
         .binance: ChainConfig("Binance", tw: "smartchain", api: ["Binance", "BSC"]),

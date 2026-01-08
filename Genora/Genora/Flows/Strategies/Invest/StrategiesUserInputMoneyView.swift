@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StrategiesUserInputMoneyView: View {
     @Bindable var viewModel: StrategiesViewModel
-    @FocusState private var isAmountFieldFocused: Bool
+    @FocusState.Binding var isKeyboardVisible: Bool
     
     var body: some View {
         Text("Amount you want to invest")
@@ -34,10 +34,10 @@ struct StrategiesUserInputMoneyView: View {
                 TextField("Enter the value", text: $viewModel.investmentAmount)
                     .textFieldStyle(.plain)
                     .keyboardType(.decimalPad)
-                    .focused($isAmountFieldFocused)
+                    .focused($isKeyboardVisible)
             }
             .padding()
-            .glassEffect(.regular)
+            .glassEffect(.regular, in: .rect(cornerRadius: 24))
         }
     }
 }
