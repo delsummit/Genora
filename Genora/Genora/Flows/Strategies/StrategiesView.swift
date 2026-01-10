@@ -20,6 +20,11 @@ struct StrategiesView: View {
                     Divider()
                         .frame(height: 20)
                     
+                    StrategiesMinTVLView(viewModel: viewModel, isKeyboardVisible: $isKeyboardVisible)
+                    
+                    Divider()
+                        .frame(height: 20)
+                    
                     StrategiesChainSelectionView(viewModel: viewModel)
                     
                     Divider()
