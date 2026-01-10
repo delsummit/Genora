@@ -12,7 +12,7 @@ import Observation
 final class StrategiesViewModel {
     // MARK: - Properties
     var selectedChains: Set<BlockchainChain> = []
-    var investmentAmount: String = ""
+    var investmentAmount: Double? = nil
     var minimumAPY: Double = 10.0
     var isChainSelectionPresented = false
     
@@ -37,8 +37,7 @@ final class StrategiesViewModel {
     }
     
     var validInvestmentAmount: Double? {
-        guard !investmentAmount.isEmpty else { return nil }
-        return Double(investmentAmount.replacingOccurrences(of: ",", with: "."))
+        investmentAmount
     }
     
     // MARK: - Actions
@@ -59,7 +58,7 @@ final class StrategiesViewModel {
         isChainSelectionPresented.toggle()
     }
     
-    func setInvestmentAmount(_ amount: String) {
+    func setInvestmentAmount(_ amount: Double?) {
         investmentAmount = amount
     }
     

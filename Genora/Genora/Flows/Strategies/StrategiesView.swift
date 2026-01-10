@@ -43,7 +43,6 @@ struct StrategiesView: View {
                 )
                 .padding()
             }
-            .scrollDismissesKeyboard(.interactively)
             .background(Color.backgroundPrimary.ignoresSafeArea())
             .navigationTitle("Strategies")
             .navigationBarTitleDisplayMode(.inline)

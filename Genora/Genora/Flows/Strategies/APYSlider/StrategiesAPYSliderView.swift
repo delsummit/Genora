@@ -13,10 +13,9 @@ struct StrategiesAPYSliderView: View {
     
     var body: some View {
         Text("Minimum APY")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .font(.headline)
+            .foregroundStyle(.textPrimary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 10)
         
         HStack {
             VStack(spacing: 0) {
@@ -49,7 +48,7 @@ struct StrategiesAPYSliderView: View {
                 }
             }
             .padding()
-            .glassEffect(.regular, in: .rect(cornerRadius: 24))
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
             
             HStack(spacing: 4) {
                 TextField("0", value: $viewModel.minimumAPY, format: .number.precision(.fractionLength(1)))
@@ -67,12 +66,12 @@ struct StrategiesAPYSliderView: View {
                 
                 Text("%")
                     .font(.title2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
             }
             .frame(width: 80)
             .frame(maxHeight: .infinity)
             .padding(.horizontal, 16)
-            .glassEffect(.regular, in: .rect(cornerRadius: 24))
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
         }
     }
 }

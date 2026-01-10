@@ -12,10 +12,9 @@ struct StrategiesChainSelectionView: View {
     
     var body: some View {
         Text("Mark preferred chains")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .font(.headline)
+            .foregroundStyle(.textPrimary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 10)
         
         HStack {
             HStack {
@@ -25,7 +24,7 @@ struct StrategiesChainSelectionView: View {
             }
             .frame(minHeight: 60)
             .padding(.horizontal)
-            .glassEffect(.regular, in: .rect(cornerRadius: 24))
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
 
             Button(action: {
                 HapticsEngine.shared.lightTap()
@@ -47,7 +46,7 @@ struct StrategiesChainSelectionView: View {
     private var headerView: some View {
         if !viewModel.hasSelectedChains {
             Text("Default: all chains")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.textSecondary)
         } else {
             ChainIconStackView(
                 chains: viewModel.selectedChainsArray,

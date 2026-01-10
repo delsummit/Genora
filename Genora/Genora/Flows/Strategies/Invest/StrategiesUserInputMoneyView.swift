@@ -11,12 +11,17 @@ struct StrategiesUserInputMoneyView: View {
     @Bindable var viewModel: StrategiesViewModel
     @FocusState.Binding var isKeyboardVisible: Bool
     
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+    
     var body: some View {
         Text("Amount you want to invest")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .font(.headline)
+            .foregroundStyle(.textPrimary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 10)
         
         HStack {
             HStack {
@@ -25,19 +30,38 @@ struct StrategiesUserInputMoneyView: View {
                     .scaledToFit()
                     .frame(width: 24, height: 24)
                 Text("USDT")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                     .bold()
-                Rectangle()
-                    .fill(.tertiary)
-                    .frame(width: 1)
+                Divider()
                 
-                TextField("Enter the value", text: $viewModel.investmentAmount)
-                    .textFieldStyle(.plain)
-                    .keyboardType(.decimalPad)
-                    .focused($isKeyboardVisible)
+                HStack(spacing: 4) {
+                    if viewModel.investmentAmount != nil {
+                        Text("$")
+                            .foregroundStyle(.textSecondary)
+                            .font(.body)
+                    }
+                    
+                    TextField("Enter the value", value: $viewModel.investmentAmount, formatter: formatter)
+                        .textFieldStyle(.plain)
+                        .keyboardType(.decimalPad)
+                        .focused($isKeyboardVisible)
+                        .foregroundStyle(.textSecondary)
+                }
+                
+                
+                if viewModel.investmentAmount != nil {
+                    Button {
+                        viewModel.investmentAmount = nil
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.textSecondary)
+                            .font(.title3)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             .padding()
-            .glassEffect(.regular, in: .rect(cornerRadius: 24))
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
         }
     }
 }
