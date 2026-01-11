@@ -36,11 +36,33 @@ struct DashboardView: View {
                 .task {
                     await viewModel.loadDashboardData()
                 }
+                defiLlamaMention
             }
             .navigationTitle("Dashboard")
             .navigationBarTitleDisplayMode(.inline)
             .background(.backgroundPrimary)
         }
+    }
+    
+    @ViewBuilder
+    private var defiLlamaMention: some View {
+        HStack {
+            Image("defillama")
+                .resizable()
+                .saturation(0)
+                .colorMultiply(Color.textPrimary)
+                .frame(width: 100, height: 100)
+            
+            VStack {
+                Text("Powered by")
+                    .font(.headline)
+                    .foregroundStyle(.textPrimary)
+                Text("DefiLlama")
+                    .font(.headline)
+                    .foregroundStyle(.textPrimary)
+            }
+        }
+        .padding()
     }
 }
 

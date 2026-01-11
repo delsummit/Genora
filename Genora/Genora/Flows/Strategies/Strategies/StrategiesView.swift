@@ -24,6 +24,8 @@ struct StrategiesView: View {
                 content
                 
                 searchButton
+                
+                defiLlamaMention
             }
             .background(Color.backgroundPrimary.ignoresSafeArea())
             .navigationTitle("Strategies")
@@ -104,6 +106,26 @@ struct StrategiesView: View {
             .tint(.backgroundSecondary)
         }
         .padding(.horizontal)
+    }
+    
+    private var defiLlamaMention: some View {
+        HStack {
+            Image("defillama")
+                .resizable()
+                .saturation(0)
+                .colorMultiply(Color.textPrimary)
+                .frame(width: 100, height: 100)
+            
+            VStack {
+                Text("Powered by")
+                    .font(.headline)
+                    .foregroundStyle(.textPrimary)
+                Text("DefiLlama")
+                    .font(.headline)
+                    .foregroundStyle(.textPrimary)
+            }
+        }
+        .padding()
     }
 }
 

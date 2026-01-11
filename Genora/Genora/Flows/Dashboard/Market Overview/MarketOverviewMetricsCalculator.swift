@@ -30,13 +30,8 @@ struct MarketOverviewMetricsCalculator {
             return []
         }
         
-        // TODO: Replace with real APY
-        let avgAPY = 18.5
-        let apyChange = 2.1
-        
         return [
             .tvl(value: totalTVL, changePercent: tvlChange),
-            .averageAPY(percent: avgAPY, changePercent: apyChange),
             .topProtocol(name: topProtocol.name, tvl: topProtocol.tvl ?? 0, changePercent: topProtocol.change_1d ?? 0),
             .topChain(name: topChain.name, tvl: topChain.tvl, changePercent: topChain.change)
         ]

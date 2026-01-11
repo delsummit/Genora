@@ -29,7 +29,6 @@ struct TVLChartView: View {
         }
         .padding()
         .background(chartBackground)
-        .overlay(chartBorder)
         .onAppear {
             haptics.prepareHaptics()
         }

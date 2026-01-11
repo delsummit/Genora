@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "USDT_Logo 1.png",
+      "filename" : "defillama 2.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "USDT_Logo.png",
+      "filename" : "defillama 1.svg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "USDT_Logo 2.png",
+      "filename" : "defillama.svg",
       "idiom" : "universal",
       "scale" : "3x"
     }

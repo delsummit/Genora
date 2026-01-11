@@ -61,10 +61,6 @@ struct MarketOverviewCard: View {
         )
         
         MarketOverviewCard(
-            metric: .averageAPY(percent: 8.5, changePercent: -2.3)
-        )
-        
-        MarketOverviewCard(
             metric: .topProtocol(name: "Aave", tvl: 12_500_000, changePercent: 5.2)
         )
         

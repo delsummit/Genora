@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StrategiesSearchResultPoolRow: View {
     let pool: YieldPool
+    @Environment(\.openURL) private var openURL
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -59,7 +60,25 @@ struct StrategiesSearchResultPoolRow: View {
                     .foregroundStyle(.element)
             }
                 .font(.subheadline)
-
+            HStack {
+                Spacer()
+                
+                Button {
+                    if let url = URL(string: "https://defillama.com/yields/pool/\(pool.pool)") {
+                        openURL(url)
+                    }
+                } label: {
+                    HStack (spacing: 2){
+                        Text("Find this pool on DefiLlama")
+                            .font(.footnote)
+                            .underline()
+                        Image(systemName: "arrow.up.forward.app")
+                            .font(.caption2)
+                    }
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.textPrimary)
+            }
         }
         .padding(.vertical, 4)
     }
