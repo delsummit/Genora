@@ -21,6 +21,7 @@ final class StrategiesViewModel {
     var filteredPools: [YieldPool] = []
     var isLoading = false
     var errorMessage: String?
+    var shouldShowResults = false
     
     private let apiClient: DeFiAPIClientProtocol
     
@@ -133,10 +134,15 @@ final class StrategiesViewModel {
     func performSearch() async {
         isLoading = true
         errorMessage = nil
+        shouldShowResults = false
         
         do {
             pools = try await apiClient.fetchYieldPools()
             filteredPools = applyAllFilters(pools)
+            
+            if !filteredPools.isEmpty {
+                shouldShowResults = true
+            }
         } catch {
             errorMessage = "\(error.localizedDescription)"
             pools = []

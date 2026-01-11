@@ -27,6 +27,10 @@ struct StrategiesView: View {
             }
             .background(Color.backgroundPrimary.ignoresSafeArea())
             .navigationTitle("Strategies")
+            .navigationDestination(isPresented: $viewModel.shouldShowResults) {
+                StrategiesSearchResultView(pools: viewModel.filteredPools)
+            }
+        
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if focusedField != nil {
