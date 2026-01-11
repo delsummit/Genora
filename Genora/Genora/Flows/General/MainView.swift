@@ -19,10 +19,6 @@ struct MainView: View {
             Tab("Strategies", systemImage: "chart.pie", value: "Strategies") {
                 StrategiesView()
             }
-            
-            Tab("Settings", systemImage: "gear", value: "Settings") {
-                SettingsView()
-            }
         }
         .onAppear() {
             let appearance = UITabBarAppearance()

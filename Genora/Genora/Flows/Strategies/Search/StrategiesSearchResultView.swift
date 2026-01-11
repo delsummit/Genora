@@ -17,18 +17,24 @@ struct StrategiesSearchResultView: View {
     }
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(sortedPools) { pool in
-                    
-                    StrategiesSearchResultPoolRow(pool: pool)
-                        .padding()
-                        .background(.backgroundSecondary)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        Group {
+            if pools.isEmpty {
+                emptyStateView
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(sortedPools) { pool in
+                            
+                            StrategiesSearchResultPoolRow(pool: pool)
+                                .padding()
+                                .background(.backgroundSecondary)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                        }
+                    }
+                    .padding()
                 }
             }
-            .padding()
         }
         .navigationTitle("Results (\(pools.count))")
         .navigationBarTitleDisplayMode(.inline)
@@ -62,6 +68,26 @@ struct StrategiesSearchResultView: View {
         .toolbarBackground(.visible, for: .tabBar)
         .toolbar(.hidden, for: .tabBar)
         .background(.backgroundPrimary)
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 60))
+                .foregroundStyle(.textSecondary.opacity(0.5))
+            
+            Text("No pools found")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.textPrimary)
+            
+            Text("Try adjusting your filters to see more results")
+                .font(.subheadline)
+                .foregroundStyle(.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

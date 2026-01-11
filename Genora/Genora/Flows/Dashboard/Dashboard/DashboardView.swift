@@ -38,6 +38,9 @@ struct DashboardView: View {
                 }
                 defiLlamaMention
             }
+            .refreshable {
+                await viewModel.loadDashboardData()
+            }
             .navigationTitle("Dashboard")
             .navigationBarTitleDisplayMode(.inline)
             .background(.backgroundPrimary)

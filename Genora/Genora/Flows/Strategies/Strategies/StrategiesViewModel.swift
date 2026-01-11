@@ -140,13 +140,12 @@ final class StrategiesViewModel {
             pools = try await apiClient.fetchYieldPools()
             filteredPools = applyAllFilters(pools)
             
-            if !filteredPools.isEmpty {
-                shouldShowResults = true
-            }
+            shouldShowResults = true
         } catch {
             errorMessage = "\(error.localizedDescription)"
             pools = []
             filteredPools = []
+            shouldShowResults = false
         }
         
         isLoading = false

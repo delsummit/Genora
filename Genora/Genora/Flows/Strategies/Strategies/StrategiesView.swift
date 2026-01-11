@@ -94,9 +94,15 @@ struct StrategiesView: View {
                 }
             }) {
                 HStack {
-                    Image(systemName: "magnifyingglass")
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "magnifyingglass")
+                    }
                     
-                    Text("Search pools")
+                    Text(viewModel.isLoading ? "Searching..." : "Search pools")
                 }
                 .font(.headline)
                 .frame(maxWidth: .infinity)
@@ -104,6 +110,18 @@ struct StrategiesView: View {
             }
             .buttonStyle(.glassProminent)
             .tint(.backgroundSecondary)
+            .disabled(viewModel.isLoading)
+            
+            if let errorMessage = viewModel.errorMessage {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.accentRed)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundStyle(.textSecondary)
+                }
+                .padding(.horizontal)
+            }
         }
         .padding(.horizontal)
     }
