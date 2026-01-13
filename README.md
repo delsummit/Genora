@@ -39,7 +39,7 @@ DeHunt is useful for Crypto Pool hunters/farmers. Built with SwiftUI and using l
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Category | Technology |
 |----------|------------|
@@ -50,6 +50,8 @@ DeHunt is useful for Crypto Pool hunters/farmers. Built with SwiftUI and using l
 | **Haptics** | CoreHaptics |
 | **Effects** | GlassEffect (iOS 26) |
 | **API** | [DeFi Llama](https://api-docs.defillama.com/) |
+| **Persistence** | SwiftData |
+
 
 ---
 
@@ -128,6 +130,14 @@ DeHunt uses the free [DeFi Llama API]([https://defillama.com/docs/api](https://a
 
 ---
 
+## TODO
+* Implement Favourite pools and store them in SwiftData
+* Cache unrepeatable icons/data to optimise loading and networking
+* Create Firebase account and implement user database
+* more to come...
+
+---
+
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
@@ -136,6 +146,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## Author
 
+**delsummit**
 **Rostyslav Mukoida**
 
 - GitHub: [@delsummit](https://github.com/delsummit)
