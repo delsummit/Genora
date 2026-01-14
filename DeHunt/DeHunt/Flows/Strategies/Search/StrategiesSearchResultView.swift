@@ -9,16 +9,17 @@ import SwiftUI
 
 struct StrategiesSearchResultView: View {
     let pools: [YieldPool]
+    @Bindable var viewModel: StrategiesViewModel
     
     @State private var sortOption: PoolSortOption = .none
     
     private var sortedPools: [YieldPool] {
-        sortOption.sort(pools)
+        sortOption.sort(viewModel.filteredPools)
     }
     
     var body: some View {
         Group {
-            if pools.isEmpty {
+            if viewModel.filteredPools.isEmpty {
                 emptyStateView
             } else {
                 ScrollView {
@@ -36,8 +37,15 @@ struct StrategiesSearchResultView: View {
                 }
             }
         }
-        .navigationTitle("Results (\(pools.count))")
+        .navigationTitle("Results (\(viewModel.filteredPools.count))")
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(
+            text: $viewModel.searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Search by project, symbol, or chain"
+            )
+        .autocorrectionDisabled()
+        .textInputAutocapitalization(.never)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -118,7 +126,9 @@ struct StrategiesSearchResultView: View {
                 tvlUsd: 8900000,
                 apy: 8.92
             )
-        ])
+        ],
+        viewModel: StrategiesViewModel()
+        )
     }
 }
 

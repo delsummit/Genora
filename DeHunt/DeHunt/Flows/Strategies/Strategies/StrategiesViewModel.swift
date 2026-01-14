@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Observation
+import Combine
 
 @Observable
 final class StrategiesViewModel {
@@ -23,11 +24,21 @@ final class StrategiesViewModel {
     var errorMessage: String?
     var shouldShowResults = false
     
+    var searchText: String = "" {
+        didSet {
+            searchTextSubject.send(searchText)
+        }
+    }
+    
     private let apiClient: DeFiAPIClientProtocol
+    
+    private let searchTextSubject = PassthroughSubject<String, Never>()
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initialization
     init(apiClient: DeFiAPIClientProtocol = DeFiAPIClient()) {
         self.apiClient = apiClient
+        setupSearchDebounce()
     }
     
     var selectedChainsArray: [BlockchainChain] {
@@ -60,6 +71,18 @@ final class StrategiesViewModel {
 
     
     // MARK: - Actions
+    
+    private func setupSearchDebounce() {
+        searchTextSubject
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] searchQuery in
+                guard let self = self else { return }
+                guard !self.pools.isEmpty else { return }
+                self.filteredPools = self.applyAllFilters(self.pools)
+            }
+            .store(in: &cancellables)
+    }
 
     func toggleChain(_ chain: BlockchainChain) {
         if selectedChains.contains(chain) {
@@ -124,17 +147,33 @@ final class StrategiesViewModel {
         }
     }
     
+    func filterPoolsBySearchText(_ pools: [YieldPool]) -> [YieldPool] {
+        guard !searchText.isEmpty else {
+            return pools
+        }
+        
+        let lowercaseQuery = searchText.lowercased()
+        
+        return pools.filter { pool in
+            pool.project.lowercased().contains(lowercaseQuery) ||
+            pool.symbol.lowercased().contains(lowercaseQuery) ||
+            pool.chain.lowercased().contains(lowercaseQuery)
+        }
+    }
+    
     func applyAllFilters(_ pools: [YieldPool]) -> [YieldPool] {
         let chainFiltered = filterPools(pools)
         let tvlFiltered = filterPoolsByTVL(chainFiltered)
         let apyFiltered = filterPoolsByAPY(tvlFiltered)
-        return apyFiltered
+        let searchFiltered = filterPoolsBySearchText(apyFiltered)
+        return searchFiltered
     }
     
     func performSearch() async {
         isLoading = true
         errorMessage = nil
         shouldShowResults = false
+        searchText = ""
         
         do {
             pools = try await apiClient.fetchYieldPools()

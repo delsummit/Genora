@@ -28,9 +28,9 @@ struct StrategiesSearchResultPoolRow: View {
             HStack {
                 Text("Pool")
                     .fontWeight(.semibold)
-
+                
                 Spacer()
-
+                
                 Text("\(pool.symbol)")
                     .foregroundStyle(.element)
                     .fontWeight(.semibold)
@@ -51,7 +51,7 @@ struct StrategiesSearchResultPoolRow: View {
             HStack {
                 Text("Total Value Locked")
                     .fontWeight(.semibold)
-
+                
                 
                 Spacer()
                 
@@ -59,7 +59,7 @@ struct StrategiesSearchResultPoolRow: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.element)
             }
-                .font(.subheadline)
+            .font(.subheadline)
             HStack {
                 Spacer()
                 
@@ -143,6 +143,8 @@ struct StrategiesSearchResultPoolRow: View {
                 tvlUsd: 8900000,
                 apy: 8.92
             )
-        ])
+        ],
+                                   viewModel: StrategiesViewModel()
+        )
     }
 }
