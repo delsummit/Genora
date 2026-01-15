@@ -1,6 +1,6 @@
 # DeHunt
 
-**DeFi Yield Finding App for iOS**
+**DeFi Yield Hunting App for iOS**
 
 DeHunt is useful for Crypto Pool hunters/farmers. Built with SwiftUI and using latest iOS-dev technologies. That is the reason why minimal iOS deployment version is 26.0. DeHunt Networking is based on DefiLlama API, so I want to express my gratitude for providing a lot of useful data for free.
 
@@ -51,6 +51,7 @@ DeHunt is useful for Crypto Pool hunters/farmers. Built with SwiftUI and using l
 | **Effects** | GlassEffect (iOS 26) |
 | **API** | [DeFi Llama](https://api-docs.defillama.com/) |
 | **Persistence** | SwiftData |
+| **Reactivity** | Combine (Search) |
 
 
 ---
